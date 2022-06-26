@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-public class Student {
+@Entity(name="tb_user")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,13 +24,19 @@ public class Student {
     @Length(min = 5)
     private String password;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Notification> notifications = new HashSet<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "tb_user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> authorities = new HashSet<>();
 
-    public Student() {
+    public User() {
     }
 
-    public Student(String name, String email, String password, Set<Role> authorities) {
+    public User(String name, String email, String password, Set<Role> authorities) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -77,7 +83,7 @@ public class Student {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
+        User student = (User) o;
         return Objects.equals(id, student.id) && Objects.equals(email, student.email);
     }
 

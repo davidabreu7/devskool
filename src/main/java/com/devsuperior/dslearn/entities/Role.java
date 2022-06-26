@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
+@Entity(name="tb_role")
 public class Role {
 
     @Id
@@ -14,7 +14,7 @@ public class Role {
     private String authority;
 
     @ManyToMany(mappedBy = "authorities")
-    private Set<Student> students = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 
     public Role() {
     }
@@ -61,7 +61,7 @@ public class Role {
                 '}';
     }
 
-    public Set<Student> getStudents() {
-        return students;
+    public Set<User> getUsers() {
+        return users;
     }
 }
