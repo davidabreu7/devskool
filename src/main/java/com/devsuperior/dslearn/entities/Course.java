@@ -1,7 +1,8 @@
 package com.devsuperior.dslearn.entities;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,7 +17,7 @@ public class Course {
     private String imgGrayUri;
 
     @OneToMany(mappedBy = "course")
-    private Set<Offer> offers = new HashSet<>();
+    private List<Offer> offers = new ArrayList<>();
 
     public Course() {
     }
