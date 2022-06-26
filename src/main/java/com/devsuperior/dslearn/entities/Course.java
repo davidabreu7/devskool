@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity(name = "tb_course")
 public class Course {
@@ -60,11 +59,11 @@ public class Course {
         this.imgGrayUri = imgGrayUri;
     }
 
-    public Set<Offer> getOffers() {
+    public List<Offer> getOffers() {
         return offers;
     }
 
-    public void setOffers(Set<Offer> offers) {
+    public void setOffers(List<Offer> offers) {
         this.offers = offers;
     }
 
