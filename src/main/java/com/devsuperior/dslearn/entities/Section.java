@@ -1,7 +1,9 @@
 package com.devsuperior.dslearn.entities;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity(name = "tb_section")
 public class Section {
@@ -22,13 +24,8 @@ public class Section {
     @JoinColumn(name = "prerequisite_id")
     private Section prerequisite;
 
-    public Section getPrerequisite() {
-        return prerequisite;
-    }
-
-    public void setPrerequisite(Section prerequisite) {
-        this.prerequisite = prerequisite;
-    }
+    @OneToMany(mappedBy = "section")
+    private Set<Lesson> lessons = new HashSet<>();
 
     public Section() {
     }
@@ -40,6 +37,16 @@ public class Section {
         this.position = position;
         this.imgUri = imgUri;
         this.resource = resource;
+    }
+    public Section(Long id, String title, String description, Integer position, String imgUri, Resource resource, Section prerequisite, Set<Lesson> lessons) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.position = position;
+        this.imgUri = imgUri;
+        this.resource = resource;
+        this.prerequisite = prerequisite;
+        this.lessons = lessons;
     }
 
     public Long getId() {
@@ -90,6 +97,14 @@ public class Section {
         this.resource = resource;
     }
 
+    public Section getPrerequisite() {
+        return prerequisite;
+    }
+
+    public void setPrerequisite(Section prerequisite) {
+        this.prerequisite = prerequisite;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -113,5 +128,9 @@ public class Section {
                 ", imgUri='" + imgUri + '\'' +
                 ", resource=" + resource +
                 '}';
+    }
+
+    public Set<Lesson> getLessons() {
+        return lessons;
     }
 }
