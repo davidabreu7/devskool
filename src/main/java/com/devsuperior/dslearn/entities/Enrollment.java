@@ -5,6 +5,7 @@ import com.devsuperior.dslearn.entities.pk.EnrollmentPk;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +21,10 @@ public class Enrollment {
     private boolean onlyUpdate;
 
     @ManyToMany(mappedBy = "enrollmentsDone")
-    Set<Lesson> lessonsDone = new HashSet<>();
+    private Set<Lesson> lessonsDone = new HashSet<>();
+
+    @OneToMany(mappedBy = "enrollment")
+    private Set<Deliver> delivers = new HashSet<>();
 
     public Enrollment() {
     }

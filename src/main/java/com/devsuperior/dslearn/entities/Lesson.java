@@ -27,6 +27,9 @@ public abstract class Lesson {
                 @JoinColumn(name = "offer_id")})
     private Set<Enrollment> enrollmentsDone = new HashSet<>();
 
+    @OneToMany(mappedBy = "lesson")
+    private Set<Deliver> delivers = new HashSet<>();
+
     public Lesson() {
     }
 
@@ -71,6 +74,10 @@ public abstract class Lesson {
 
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    public Set<Deliver> getDelivers() {
+        return delivers;
     }
 
     @Override

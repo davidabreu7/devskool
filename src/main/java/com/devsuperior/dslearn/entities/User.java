@@ -1,18 +1,18 @@
 package com.devsuperior.dslearn.entities;
 
 
-
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity(name="tb_user")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,8 +33,16 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> authorities = new HashSet<>();
 
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
+
+    @ElementCollection
+    private List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+
     public User() {
     }
+
 
     public User(String name, String email, String password, Set<Role> authorities) {
         this.name = name;
@@ -42,6 +50,7 @@ public class User {
         this.password = password;
         this.authorities = authorities;
     }
+
 
     public Long getId() {
         return id;
@@ -71,12 +80,18 @@ public class User {
         return password;
     }
 
+
     public void setPassword(String password) {
         this.password = password;
     }
 
     public Set<Role> getAuthorities() {
+        initAuthorities();
         return authorities;
+    }
+
+    private void initAuthorities() {
+
     }
 
     @Override
@@ -101,5 +116,37 @@ public class User {
                 ", password='" + password + '\'' +
                 ", authorities=" + authorities +
                 '}';
+    }
+
+    @Override
+    public String getUsername() {
+        return name;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public void setGrantedAuthorities() {
+
+         authorities.stream()
+                 .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+                 .forEach(grantedAuthority -> grantedAuthorities.add(grantedAuthority));
     }
 }
