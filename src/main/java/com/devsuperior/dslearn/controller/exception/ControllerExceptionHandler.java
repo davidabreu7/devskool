@@ -1,7 +1,9 @@
 package com.devsuperior.dslearn.controller.exception;
 
 import com.devsuperior.dslearn.exceptions.DataBaseException;
+import com.devsuperior.dslearn.exceptions.ForbbidenException;
 import com.devsuperior.dslearn.exceptions.ResourceNotFoundException;
+import com.devsuperior.dslearn.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,6 +40,18 @@ public class ControllerExceptionHandler {
     public ResponseEntity<StandardError> validation(HttpServletRequest request, MethodArgumentNotValidException e) {
         ValidationError err = createValidationError(request, e);
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+    }
+
+    @ExceptionHandler(ForbbidenException.class)
+    public ResponseEntity<AuthorizationError> forbidden(HttpServletRequest request, ForbbidenException e) {
+        AuthorizationError err = new AuthorizationError( "Forbidden", e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<AuthorizationError> forbidden(HttpServletRequest request, UnauthorizedException e) {
+        AuthorizationError err = new AuthorizationError( "Unauthorized", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
     }
 
     private ValidationError createValidationError(HttpServletRequest request, MethodArgumentNotValidException e) {

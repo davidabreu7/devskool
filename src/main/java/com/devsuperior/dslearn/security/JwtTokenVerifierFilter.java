@@ -2,10 +2,15 @@ package com.devsuperior.dslearn.security;
 
 
 import com.devsuperior.dslearn.config.JwtConfig;
+import com.devsuperior.dslearn.controller.exception.AuthorizationError;
+import com.devsuperior.dslearn.exceptions.UnauthorizedException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -27,25 +32,17 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
 
     private final JwtConfig jwtConfig;
 
+
     public JwtTokenVerifierFilter(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         String authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            if (!request.getMethod().equals("GET")) {
-                response.setStatus(401);
-                return;
-            }
-            filterChain.doFilter(request, response);
-            return;
-        }
         try {
             String token = authorizationHeader.replace("Bearer ", "");
-
 
             Jws<Claims> claimsJws = Jwts.parserBuilder()
                     .setSigningKey(jwtConfig.getSecretKeyForSigning())
@@ -67,8 +64,12 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         }
-        catch (AuthenticationException | JwtException e){
-            throw new IllegalStateException("Token not valid");
+        catch (AuthenticationException | ServletException | IOException | JwtException e){
+            ObjectMapper objectMapper = new ObjectMapper();
+            AuthorizationError errorResponse = new AuthorizationError( "Unauthorized", e.getMessage());
+            response.setContentType("application/json");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         }
     }
 }

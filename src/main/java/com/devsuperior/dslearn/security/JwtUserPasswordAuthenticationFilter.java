@@ -1,10 +1,13 @@
 package com.devsuperior.dslearn.security;
 
 import com.devsuperior.dslearn.config.JwtConfig;
+import com.devsuperior.dslearn.controller.exception.AuthorizationError;
 import com.devsuperior.dslearn.dto.UserAuthenticationDto;
+import com.devsuperior.dslearn.exceptions.UnauthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +30,9 @@ public class JwtUserPasswordAuthenticationFilter extends UsernamePasswordAuthent
     private final JwtConfig jwtConfig;
     @Autowired
     private  AuthenticationManager authenticationManager;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     public JwtUserPasswordAuthenticationFilter(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
@@ -70,7 +76,10 @@ public class JwtUserPasswordAuthenticationFilter extends UsernamePasswordAuthent
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        response.setStatus(401);
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        AuthorizationError errorResponse = new AuthorizationError( "Unauthorized", failed.getMessage());
+        response.setContentType("application/json");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }
