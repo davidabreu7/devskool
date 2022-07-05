@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public JwtUserPasswordAuthenticationFilter jwtLoginFilter() throws Exception {
         var filter = new JwtUserPasswordAuthenticationFilter(jwtConfig);
         filter.setAuthenticationManager(authenticationManagerBean());
-        filter.setFilterProcessesUrl("/oauth/token");
+        filter.setFilterProcessesUrl("/login");
         return filter;
     }
 

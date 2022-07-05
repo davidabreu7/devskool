@@ -85,14 +85,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Set<Role> getAuthorities() {
-        initAuthorities();
-        return authorities;
+    @Override
+    public List<GrantedAuthority> getAuthorities() {
+        return grantedAuthorities;
     }
 
-    private void initAuthorities() {
-
-    }
 
     @Override
     public boolean equals(Object o) {

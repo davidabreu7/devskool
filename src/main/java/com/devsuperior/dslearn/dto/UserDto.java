@@ -1,21 +1,28 @@
 package com.devsuperior.dslearn.dto;
 
+import com.devsuperior.dslearn.entities.User;
+
 public class UserDto {
 
     private Long id;
     private String name;
     private String email;
-    private String password;
 
     public UserDto() {
     }
 
-    public UserDto(Long id, String name, String email, String password) {
+    public UserDto(Long id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.password = password;
     }
+
+    public UserDto(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+    }
+
 
     public Long getId() {
         return id;
@@ -41,21 +48,12 @@ public class UserDto {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @Override
     public String toString() {
         return "StudentDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 '}';
     }
 }
