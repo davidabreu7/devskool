@@ -1,5 +1,7 @@
 package com.devsuperior.dslearn.dto;
 
+import com.devsuperior.dslearn.entities.Notification;
+
 import java.time.Instant;
 
 public class NotificationDto {
@@ -9,18 +11,27 @@ public class NotificationDto {
     private Instant moment;
     private boolean read;
     private String route;
-    private UserDto user;
+    private Long userId;
 
     public NotificationDto() {
     }
 
-    public NotificationDto(Long id, String text, Instant moment, boolean read, String route, UserDto user) {
+    public NotificationDto(Long id, String text, Instant moment, boolean read, String route, Long userId) {
         this.id = id;
         this.text = text;
         this.moment = moment;
         this.read = read;
         this.route = route;
-        this.user = user;
+        this.userId = userId;
+    }
+
+    public NotificationDto(Notification notification) {
+        this.id = notification.getId();
+        this.text = notification.getText();
+        this.moment = notification.getMoment();
+        this.read = notification.isRead();
+        this.route = notification.getRoute();
+        this.userId = notification.getUser().getId();
     }
 
     public Long getId() {
@@ -63,12 +74,12 @@ public class NotificationDto {
         this.route = route;
     }
 
-    public UserDto getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(UserDto user) {
-        this.user = user;
+    public void setUser(Long userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -79,7 +90,7 @@ public class NotificationDto {
                 ", moment=" + moment +
                 ", read=" + read +
                 ", route='" + route + '\'' +
-                ", user=" + user +
+                ", user=" + userId +
                 '}';
     }
 }

@@ -5,10 +5,7 @@ import com.devsuperior.dslearn.entities.User;
 import com.devsuperior.dslearn.exceptions.ResourceNotFoundException;
 import com.devsuperior.dslearn.exceptions.UnauthorizedException;
 import com.devsuperior.dslearn.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,11 +19,9 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
 
-    final
-    Logger logger;
-    final AuthService authService;
+   private final Logger logger;
+   private final AuthService authService;
     private final UserRepository userRepository;
-
 
     public UserService(UserRepository userRepository, AuthService authService, Logger logger) {
         this.userRepository = userRepository;
@@ -49,7 +44,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id)
                 .map(UserDto::new)
                 .orElseThrow(() -> new ResourceNotFoundException("Resource id: %d not found".formatted(id)));
-
     }
 
     private void validateSelfOrAdmin(Long userId) {
@@ -58,8 +52,6 @@ public class UserService implements UserDetailsService {
         logger.info("user: " + user.getId());
 
         User authenticated = authService.authenticated();
-
-
 
         if (!user.getId().equals(authenticated.getId()) && !authenticated.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new UnauthorizedException("Usuário não autorizado");

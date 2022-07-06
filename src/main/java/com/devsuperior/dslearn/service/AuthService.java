@@ -4,7 +4,6 @@ import com.devsuperior.dslearn.config.AuthConfig;
 import com.devsuperior.dslearn.entities.User;
 import com.devsuperior.dslearn.exceptions.UnauthorizedException;
 import com.devsuperior.dslearn.repositories.UserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +23,11 @@ public class AuthService {
     @Transactional(readOnly = true)
     public User authenticated(){
         String username = authConfig.getName();
-        System.out.println("username: " + username);
+
         User user = userRepository.findByEmail(username)
                .orElseThrow(() -> new UnauthorizedException("usuário inválido"));
         user.setGrantedAuthorities();
-        System.out.println("user: " + user.getEmail());
+
         return user;
     }
 }
