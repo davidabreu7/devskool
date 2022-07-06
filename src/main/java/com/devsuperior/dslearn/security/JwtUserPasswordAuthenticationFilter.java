@@ -1,5 +1,6 @@
 package com.devsuperior.dslearn.security;
 
+import com.devsuperior.dslearn.config.AuthConfig;
 import com.devsuperior.dslearn.config.JwtConfig;
 import com.devsuperior.dslearn.controller.exception.AuthorizationError;
 import com.devsuperior.dslearn.dto.UserAuthenticationDto;
@@ -32,6 +33,9 @@ public class JwtUserPasswordAuthenticationFilter extends UsernamePasswordAuthent
     private  AuthenticationManager authenticationManager;
 
     @Autowired
+    private AuthConfig authConfig;
+
+    @Autowired
     ObjectMapper objectMapper;
 
     public JwtUserPasswordAuthenticationFilter(JwtConfig jwtConfig) {
@@ -47,6 +51,7 @@ public class JwtUserPasswordAuthenticationFilter extends UsernamePasswordAuthent
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(authenticationUser.getEmail(), authenticationUser.getPassword());
 
+            response.addHeader("email", authenticationUser.getEmail());
             return authenticationManager.authenticate(authentication);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -58,10 +63,12 @@ public class JwtUserPasswordAuthenticationFilter extends UsernamePasswordAuthent
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws IOException {
-
+        authConfig.setName(response.getHeader("email"));
+        System.out.println(response.getHeader("email"));
+        System.out.println(authConfig.getName());
         SecretKey secretKey = jwtConfig.getSecretKeyForSigning();
         String token = Jwts.builder()
-                .setSubject(authResult.getName())
+                .setSubject(response.getHeader("email"))
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationWeeks())))

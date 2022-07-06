@@ -23,7 +23,6 @@ public class UserDto {
         this.email = user.getEmail();
     }
 
-
     public Long getId() {
         return id;
     }

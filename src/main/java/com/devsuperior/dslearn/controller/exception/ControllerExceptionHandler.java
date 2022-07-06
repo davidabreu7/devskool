@@ -50,7 +50,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<AuthorizationError> forbidden(HttpServletRequest request, UnauthorizedException e) {
-        AuthorizationError err = new AuthorizationError( "Unauthorized", e.getMessage());
+        AuthorizationError err = new AuthorizationError( "Unauthorized", "usuário não autorizado");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
     }
 

@@ -1,9 +1,9 @@
 package com.devsuperior.dslearn.security;
 
 
+import com.devsuperior.dslearn.config.AuthConfig;
 import com.devsuperior.dslearn.config.JwtConfig;
 import com.devsuperior.dslearn.controller.exception.AuthorizationError;
-import com.devsuperior.dslearn.exceptions.UnauthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -32,9 +32,11 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
 
     private final JwtConfig jwtConfig;
 
+    private AuthConfig authConfig;
 
-    public JwtTokenVerifierFilter(JwtConfig jwtConfig) {
+    public JwtTokenVerifierFilter(JwtConfig jwtConfig, AuthConfig authConfig) {
         this.jwtConfig = jwtConfig;
+        this.authConfig = authConfig;
     }
 
     @Override
@@ -52,6 +54,8 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
             Claims body = claimsJws.getBody();
 
             String username = body.getSubject();
+            authConfig.setName(username);
+
 
             var authorities = (List<Map<String, String>>) body.get("authorities");
             Set<SimpleGrantedAuthority> authority = authorities.stream()
