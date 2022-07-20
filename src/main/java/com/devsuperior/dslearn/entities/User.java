@@ -9,9 +9,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Entity(name="tb_user")
+@Entity
+@Table(name = "tb_user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,28 +36,21 @@ public class User implements UserDetails {
     @JoinTable(name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> authorities = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
     public Set<Notification> getNotifications() {
         return notifications;
     }
 
-    @ElementCollection
-    private List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-
     public User() {
     }
 
-
-    public User(String name, String email, String password, Set<Role> authorities) {
+    public User(String name, String email, String password, Set<Role> roles) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.authorities = authorities;
+        this.roles = roles;
     }
-
-
-
 
     public Long getId() {
         return id;
@@ -82,14 +80,18 @@ public class User implements UserDetails {
         return password;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    @Override
     public List<GrantedAuthority> getAuthorities() {
-        return grantedAuthorities;
+        return getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+                .collect(Collectors.toList());
     }
 
 
@@ -113,7 +115,7 @@ public class User implements UserDetails {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", authorities=" + authorities +
+                ", authorities=" + roles +
                 '}';
     }
 
@@ -142,10 +144,4 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setGrantedAuthorities() {
-
-         authorities.stream()
-                 .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
-                 .forEach(grantedAuthority -> grantedAuthorities.add(grantedAuthority));
-    }
 }

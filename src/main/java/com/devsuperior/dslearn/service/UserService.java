@@ -25,7 +25,6 @@ public class UserService implements UserDetailsService {
 
     public UserService(UserRepository userRepository, AuthService authService, Logger logger) {
         this.userRepository = userRepository;
-
         this.authService = authService;
         this.logger = logger;
     }
@@ -53,7 +52,7 @@ public class UserService implements UserDetailsService {
 
         User authenticated = authService.authenticated();
 
-        if (!user.getId().equals(authenticated.getId()) && !authenticated.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+        if (!user.getId().equals(authenticated.getId()) && !authenticated.getRoles().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new UnauthorizedException("Usuário não autorizado");
         }
     }
@@ -61,11 +60,8 @@ public class UserService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username)
+
+        return userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-
-        user.setGrantedAuthorities();
-
-        return user;
     }
 }

@@ -24,10 +24,9 @@ public class AuthService {
     public User authenticated(){
         String username = authConfig.getName();
 
-        User user = userRepository.findByEmail(username)
-               .orElseThrow(() -> new UnauthorizedException("usuário inválido"));
-        user.setGrantedAuthorities();
+        //        user.setGrantedAuthorities();
 
-        return user;
+        return userRepository.findByEmail(username)
+               .orElseThrow(() -> new UnauthorizedException("usuário inválido"));
     }
 }

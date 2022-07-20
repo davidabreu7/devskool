@@ -1,21 +1,19 @@
 package com.devsuperior.dslearn.entities;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity(name="tb_role")
-public class Role implements GrantedAuthority {
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String authority;
 
-    @ManyToMany(mappedBy = "authorities")
+    @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
 
     public Role() {
