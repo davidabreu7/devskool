@@ -4,12 +4,12 @@ package com.devsuperior.dslearn.security;
 import com.devsuperior.dslearn.config.AuthConfig;
 import com.devsuperior.dslearn.config.JwtConfig;
 import com.devsuperior.dslearn.controller.exception.AuthorizationError;
+import com.devsuperior.dslearn.exceptions.UnauthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,10 +40,20 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String authorizationHeader = request.getHeader("Authorization");
 
         try {
+
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                if (request.getMethod().equals("GET")) {
+                    filterChain.doFilter(request, response);
+                    return;
+                } else {
+                    throw new UnauthorizedException("Token not provided");
+                }
+            }
+
             String token = authorizationHeader.replace("Bearer ", "");
 
             Jws<Claims> claimsJws = Jwts.parserBuilder()
@@ -68,7 +78,7 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         }
-        catch (AuthenticationException | ServletException | IOException | JwtException e){
+        catch (AuthenticationException | ServletException | IOException | JwtException | UnauthorizedException e){
             ObjectMapper objectMapper = new ObjectMapper();
             AuthorizationError errorResponse = new AuthorizationError( "Unauthorized", e.getMessage());
             response.setContentType("application/json");

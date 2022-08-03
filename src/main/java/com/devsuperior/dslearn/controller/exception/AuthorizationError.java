@@ -2,7 +2,7 @@ package com.devsuperior.dslearn.controller.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AuthorizationError {
+public class AuthorizationError  {
 
     private String error;
 
