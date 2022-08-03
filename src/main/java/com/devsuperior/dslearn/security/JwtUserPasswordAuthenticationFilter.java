@@ -4,7 +4,6 @@ import com.devsuperior.dslearn.config.AuthConfig;
 import com.devsuperior.dslearn.config.JwtConfig;
 import com.devsuperior.dslearn.controller.exception.AuthorizationError;
 import com.devsuperior.dslearn.dto.UserAuthenticationDto;
-import com.devsuperior.dslearn.exceptions.UnauthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
